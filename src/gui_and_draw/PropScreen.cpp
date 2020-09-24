@@ -1100,9 +1100,9 @@ bool PropScreen::Update()
     }
 
     //==== Skin & XSec Index Display ===//
-    int xsid = propeller_ptr->GetActiveXSecIndex();
-    m_XSecIndexSelector.SetIndex( xsid );
-    m_XSecModIndexSelector.SetIndex( xsid );
+    int xsid = propeller_ptr->m_ActiveXSec();
+    m_XSecIndexSelector.Update( propeller_ptr->m_ActiveXSec.GetID() );
+    m_XSecModIndexSelector.Update( propeller_ptr->m_ActiveXSec.GetID() );
 
     PropXSec* xs = ( PropXSec* ) propeller_ptr->GetXSec( xsid );
     if ( xs )
@@ -1703,17 +1703,7 @@ void PropScreen::GuiDeviceCallBack( GuiDevice* gui_device )
     PropGeom* propeller_ptr = dynamic_cast< PropGeom* >( geom_ptr );
     assert( propeller_ptr );
 
-    if ( gui_device == &m_XSecIndexSelector )
-    {
-        propeller_ptr->SetActiveXSecIndex( m_XSecIndexSelector.GetIndex() );
-        propeller_ptr->Update();
-    }
-    else if ( gui_device == &m_XSecModIndexSelector )
-    {
-        propeller_ptr->SetActiveXSecIndex( m_XSecModIndexSelector.GetIndex() );
-        propeller_ptr->Update();
-    }
-    else if ( gui_device == &m_XSecTypeChoice )
+    if ( gui_device == &m_XSecTypeChoice )
     {
         int t = m_XSecTypeChoice.GetVal() + 1; // +1 to skip over POINT type XSec.
         propeller_ptr->SetActiveXSecType( t );
@@ -1729,7 +1719,7 @@ void PropScreen::GuiDeviceCallBack( GuiDevice* gui_device )
     }
     else if ( gui_device == &m_ConvertCEDITButton )
     {
-        XSec* xs = propeller_ptr->GetXSec( propeller_ptr->GetActiveXSecIndex() );
+        XSec* xs = propeller_ptr->GetXSec( propeller_ptr->m_ActiveXSec() );
 
         if ( xs )
         {
@@ -1764,7 +1754,7 @@ void PropScreen::GuiDeviceCallBack( GuiDevice* gui_device )
     }
     else if ( gui_device == &m_ReadFuseFileButton  )
     {
-        int xsid = propeller_ptr->GetActiveXSecIndex();
+        int xsid = propeller_ptr->m_ActiveXSec();
         XSec* xs = propeller_ptr->GetXSec( xsid );
         if ( xs )
         {
@@ -1787,7 +1777,7 @@ void PropScreen::GuiDeviceCallBack( GuiDevice* gui_device )
     }
     else if ( gui_device == &m_AfReadFileButton   )
     {
-        int xsid = propeller_ptr->GetActiveXSecIndex();
+        int xsid = propeller_ptr->m_ActiveXSec();
         XSec* xs = propeller_ptr->GetXSec( xsid );
         if ( xs )
         {
@@ -1810,7 +1800,7 @@ void PropScreen::GuiDeviceCallBack( GuiDevice* gui_device )
     }
     else if ( gui_device == &m_UpPromoteButton )
     {
-        int xsid = propeller_ptr->GetActiveXSecIndex();
+        int xsid = propeller_ptr->m_ActiveXSec();
         XSec* xs = propeller_ptr->GetXSec( xsid );
         if ( xs )
         {
@@ -1832,7 +1822,7 @@ void PropScreen::GuiDeviceCallBack( GuiDevice* gui_device )
     }
     else if ( gui_device == &m_LowPromoteButton )
     {
-        int xsid = propeller_ptr->GetActiveXSecIndex();
+        int xsid = propeller_ptr->m_ActiveXSec();
         XSec* xs = propeller_ptr->GetXSec( xsid );
         if ( xs )
         {
@@ -1855,7 +1845,7 @@ void PropScreen::GuiDeviceCallBack( GuiDevice* gui_device )
     }
     else if ( gui_device == &m_UpDemoteButton )
     {
-        int xsid = propeller_ptr->GetActiveXSecIndex();
+        int xsid = propeller_ptr->m_ActiveXSec();
         XSec* xs = propeller_ptr->GetXSec( xsid );
         if ( xs )
         {
@@ -1878,7 +1868,7 @@ void PropScreen::GuiDeviceCallBack( GuiDevice* gui_device )
     }
     else if ( gui_device == &m_LowDemoteButton )
     {
-        int xsid = propeller_ptr->GetActiveXSecIndex();
+        int xsid = propeller_ptr->m_ActiveXSec();
         XSec* xs = propeller_ptr->GetXSec( xsid );
         if ( xs )
         {
@@ -1908,7 +1898,7 @@ void PropScreen::GuiDeviceCallBack( GuiDevice* gui_device )
               ( gui_device == &m_FiveModFitCSTButton ) ||
               ( gui_device == &m_OneSixSeriesFitCSTButton ) )
     {
-        int xsid = propeller_ptr->GetActiveXSecIndex();
+        int xsid = propeller_ptr->m_ActiveXSec();
         XSec* xs = propeller_ptr->GetXSec( xsid );
         if ( xs )
         {

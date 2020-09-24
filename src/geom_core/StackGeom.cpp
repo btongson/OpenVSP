@@ -262,7 +262,7 @@ xmlNodePtr StackGeom::DecodeXml( xmlNodePtr & node )
 //==== Set Active XSec Type ====//
 void StackGeom::SetActiveXSecType( int type )
 {
-    XSec* xs = GetXSec( m_ActiveXSec );
+    XSec* xs = GetXSec( m_ActiveXSec() );
 
     if ( !xs )
     {
@@ -274,7 +274,7 @@ void StackGeom::SetActiveXSecType( int type )
         return;
     }
 
-    m_XSecSurf.ChangeXSecShape( m_ActiveXSec, type );
+    m_XSecSurf.ChangeXSecShape( m_ActiveXSec(), type );
 
     Update();
 }
@@ -283,8 +283,7 @@ void StackGeom::SetActiveXSecType( int type )
 void StackGeom::CutXSec( int index )
 {
     m_XSecSurf.CutXSec( index );
-    SetActiveXSecIndex( GetActiveXSecIndex() );
-    m_XSecSurf.FindXSec( m_ActiveXSec )->SetLateUpdateFlag( true );
+    m_XSecSurf.FindXSec( m_ActiveXSec() )->SetLateUpdateFlag( true );
     Update();
 }
 void StackGeom::CopyXSec( int index )
@@ -299,7 +298,7 @@ void StackGeom::PasteXSec( int index )
 }
 void StackGeom::InsertXSec( int index, int type )
 {
-    SetActiveXSecIndex( index );
+    m_ActiveXSec = index;
     InsertXSec( type );
 }
 
@@ -307,7 +306,7 @@ void StackGeom::InsertXSec( int index, int type )
 //==== Cut Active XSec ====//
 void StackGeom::CutActiveXSec()
 {
-    CutXSec( m_ActiveXSec );
+    CutXSec( m_ActiveXSec() );
     //m_XSecSurf.CutXSec( m_ActiveXSec );
     //SetActiveXSecIndex( GetActiveXSecIndex() );
     //m_XSecSurf.FindXSec( m_ActiveXSec )->SetLateUpdateFlag( true );
@@ -317,14 +316,14 @@ void StackGeom::CutActiveXSec()
 //==== Copy Active XSec ====//
 void StackGeom::CopyActiveXSec()
 {
-    CopyXSec( m_ActiveXSec );
+    CopyXSec( m_ActiveXSec() );
 //    m_XSecSurf.CopyXSec( m_ActiveXSec );
 }
 
 //==== Paste Cut/Copied XSec To Active XSec ====//
 void StackGeom::PasteActiveXSec()
 {
-    PasteXSec( m_ActiveXSec );
+    PasteXSec( m_ActiveXSec() );
     //m_XSecSurf.PasteXSec( m_ActiveXSec );
     //m_XSecSurf.FindXSec( m_ActiveXSec )->SetLateUpdateFlag( true );
     //Update();
@@ -339,12 +338,12 @@ void StackGeom::InsertXSec( )
         xsec_lim = NumXSec();
     }
 
-    if ( m_ActiveXSec >= xsec_lim || m_ActiveXSec < 0 )
+    if ( m_ActiveXSec() >= xsec_lim || m_ActiveXSec() < 0 )
     {
         return;
     }
 
-    XSec* xs = GetXSec( m_ActiveXSec );
+    XSec* xs = GetXSec( m_ActiveXSec() );
     if ( xs )
     {
         InsertXSec( xs->GetXSecCurve()->GetType() );
@@ -360,17 +359,17 @@ void StackGeom::InsertXSec( int type )
         xsec_lim = NumXSec();
     }
 
-    if ( m_ActiveXSec >= xsec_lim || m_ActiveXSec < 0 )
+    if ( m_ActiveXSec() >= xsec_lim || m_ActiveXSec() < 0 )
     {
         return;
     }
 
-    StackXSec* xs = ( StackXSec* ) GetXSec( m_ActiveXSec );
+    StackXSec* xs = ( StackXSec* ) GetXSec( m_ActiveXSec() );
 
-    m_XSecSurf.InsertXSec( type, m_ActiveXSec );
-    m_ActiveXSec++;
+    m_XSecSurf.InsertXSec( type, m_ActiveXSec() );
+    m_ActiveXSec = m_ActiveXSec() + 1;
 
-    StackXSec* inserted_xs = ( StackXSec* ) GetXSec( m_ActiveXSec );
+    StackXSec* inserted_xs = ( StackXSec* ) GetXSec( m_ActiveXSec() );
 
     if ( inserted_xs )
     {

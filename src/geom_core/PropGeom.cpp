@@ -1410,7 +1410,7 @@ xmlNodePtr PropGeom::DecodeXml( xmlNodePtr & node )
 //==== Set Active XSec Type ====//
 void PropGeom::SetActiveXSecType( int type )
 {
-    XSec* xs = GetXSec( m_ActiveXSec );
+    XSec* xs = GetXSec( m_ActiveXSec() );
 
     if ( !xs )
     {
@@ -1422,7 +1422,7 @@ void PropGeom::SetActiveXSecType( int type )
         return;
     }
 
-    m_XSecSurf.ChangeXSecShape( m_ActiveXSec, type );
+    m_XSecSurf.ChangeXSecShape( m_ActiveXSec(), type );
 
     Update();
 }
@@ -1431,7 +1431,6 @@ void PropGeom::SetActiveXSecType( int type )
 void PropGeom::CutXSec( int index )
 {
     m_XSecSurf.CutXSec( index );
-    SetActiveXSecIndex( GetActiveXSecIndex() );
     Update();
 }
 void PropGeom::CopyXSec( int index )
@@ -1445,37 +1444,37 @@ void PropGeom::PasteXSec( int index )
 }
 void PropGeom::InsertXSec( int index, int type )
 {
-    SetActiveXSecIndex( index );
+    m_ActiveXSec = index;
     InsertXSec( type );
 }
 
 //==== Cut Active XSec ====//
 void PropGeom::CutActiveXSec()
 {
-    CutXSec( m_ActiveXSec );
+    CutXSec( m_ActiveXSec() );
 }
 
 //==== Copy Active XSec ====//
 void PropGeom::CopyActiveXSec()
 {
-    CopyXSec( m_ActiveXSec );
+    CopyXSec( m_ActiveXSec() );
 }
 
 //==== Paste Cut/Copied XSec To Active XSec ====//
 void PropGeom::PasteActiveXSec()
 {
-    PasteXSec( m_ActiveXSec );
+    PasteXSec( m_ActiveXSec() );
 }
 
 //==== Insert XSec ====//
 void PropGeom::InsertXSec( )
 {
-    if ( m_ActiveXSec >= NumXSec() - 1 || m_ActiveXSec < 0 )
+    if ( m_ActiveXSec() >= NumXSec() - 1 || m_ActiveXSec() < 0 )
     {
         return;
     }
 
-    XSec* xs = GetXSec( m_ActiveXSec );
+    XSec* xs = GetXSec( m_ActiveXSec() );
     if ( xs )
     {
         InsertXSec( xs->GetXSecCurve()->GetType() );
@@ -1485,21 +1484,21 @@ void PropGeom::InsertXSec( )
 //==== Insert XSec ====//
 void PropGeom::InsertXSec( int type )
 {
-    if ( m_ActiveXSec >= NumXSec() - 1 || m_ActiveXSec < 0 )
+    if ( m_ActiveXSec() >= NumXSec() - 1 || m_ActiveXSec() < 0 )
     {
         return;
     }
 
-    PropXSec* xs = ( PropXSec* ) GetXSec( m_ActiveXSec );
-    PropXSec* xs_1 = ( PropXSec* ) GetXSec( m_ActiveXSec + 1 );
+    PropXSec* xs = ( PropXSec* ) GetXSec( m_ActiveXSec() );
+    PropXSec* xs_1 = ( PropXSec* ) GetXSec( m_ActiveXSec() + 1 );
 
     double y_loc_0 = xs->m_RadiusFrac();
     double y_loc_1 = xs_1->m_RadiusFrac();
 
-    m_XSecSurf.InsertXSec( type, m_ActiveXSec );
-    m_ActiveXSec++;
+    m_XSecSurf.InsertXSec( type, m_ActiveXSec() );
+    m_ActiveXSec = m_ActiveXSec() + 1;
 
-    PropXSec* inserted_xs = ( PropXSec* ) GetXSec( m_ActiveXSec );
+    PropXSec* inserted_xs = ( PropXSec* ) GetXSec( m_ActiveXSec() );
 
     if ( inserted_xs )
     {
