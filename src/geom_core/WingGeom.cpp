@@ -1279,11 +1279,12 @@ WingGeom::WingGeom( Vehicle* vehicle_ptr ) : GeomXSec( vehicle_ptr )
     m_CapUMaxOption.SetDescript("Type of End Cap on Wing Tip");
     m_CapUMaxOption.Parm::Set(FLAT_END_CAP);
 
+    m_ActiveAirfoil.Init( "ActiveXSec", "Index", this, 0, 0, 1e6 );
+
     //==== Init Parms ====//
     m_TessU = 16;
     m_TessW = 31;
     m_ActiveXSec = 1;
-    m_ActiveAirfoil = 0;
     m_SymPlanFlag = SYM_XZ;
 
     //==== Wing XSecs ====//
@@ -1312,6 +1313,13 @@ WingGeom::WingGeom( Vehicle* vehicle_ptr ) : GeomXSec( vehicle_ptr )
 WingGeom::~WingGeom()
 {
 
+}
+
+void WingGeom::Update( bool fullupdate )
+{
+    m_ActiveAirfoil.SetUpperLimit( m_XSecSurf.NumXSec() - 1 );
+
+    GeomXSec::Update( fullupdate );
 }
 
 //==== Change IDs =====//
@@ -1481,17 +1489,10 @@ void WingGeom::ComputeCenter()
     }
 }
 
-//==== Set Index For Active Airfoil ====//
-void WingGeom::SetActiveAirfoilIndex( int index )
-{
-    index = Clamp<int>( index, 0, m_XSecSurf.NumXSec() - 1 );
-    m_ActiveAirfoil = index;
-}
-
 //==== Set Active XSec Type ====//
 void WingGeom::SetActiveAirfoilType( int type )
 {
-    XSec* xs = GetXSec( m_ActiveAirfoil );
+    XSec* xs = GetXSec( m_ActiveAirfoil() );
 
     if ( !xs )
     {
@@ -1503,7 +1504,7 @@ void WingGeom::SetActiveAirfoilType( int type )
         return;
     }
 
-    m_XSecSurf.ChangeXSecShape( m_ActiveAirfoil, type );
+    m_XSecSurf.ChangeXSecShape( m_ActiveAirfoil(), type );
 
     Update();
 }
@@ -1595,9 +1596,6 @@ void WingGeom::CutWingSect( int index  )
         // which implicitly triggers this flag.
         // However, cut deletes Parms - requiring an explicit flag.
         m_SurfDirty = true;
-
-        //==== Reset Active Indeices ====//
-        SetActiveAirfoilIndex( GetActiveAirfoilIndex() );
     }
 }
 
@@ -2278,16 +2276,16 @@ void WingGeom::UpdateDrawObj()
         m_XSecDrawObj_vec[i].m_GeomChanged = true;
     }
 
-    m_HighlightXSecDrawObj.m_PntVec = m_XSecSurf.FindXSec( m_ActiveAirfoil )->GetDrawLines( relTrans );
+    m_HighlightXSecDrawObj.m_PntVec = m_XSecSurf.FindXSec( m_ActiveAirfoil() )->GetDrawLines( relTrans );
     m_HighlightXSecDrawObj.m_GeomChanged = true;
 
-    double w = m_XSecSurf.FindXSec( m_ActiveAirfoil )->GetXSecCurve()->GetWidth();
+    double w = m_XSecSurf.FindXSec( m_ActiveAirfoil() )->GetXSecCurve()->GetWidth();
 
     Matrix4d mat;
     m_XSecSurf.GetBasicTransformation( Z_DIR, X_DIR, XS_SHIFT_MID, false, 1.0, mat );
     mat.scale( 1.0/w );
 
-    VspCurve crv = m_XSecSurf.FindXSec( m_ActiveAirfoil )->GetUntransformedCurve();
+    VspCurve crv = m_XSecSurf.FindXSec( m_ActiveAirfoil() )->GetUntransformedCurve();
     crv.Transform( mat );
 
     vector< vec3d > pts;
