@@ -2129,7 +2129,7 @@ void Geom::UpdateDrawObj()
         CalcTexCoords( i, utex, vtex, pnts );
 
         int iflip = 0;
-        if ( m_SurfVec[i].GetFlipNormal() )
+        if ( GetFlipNormal(i) )
         {
             iflip = 1;
         }
@@ -3402,7 +3402,7 @@ void Geom::CreateDegenGeom( vector<DegenGeom> &dgs, bool preview )
             surftype = DegenGeom::DISK_TYPE;
         }
 
-        CreateDegenGeom( dgs, pnts, nrms, uwpnts, urootcap, i, preview, m_SurfVec[i].GetFlipNormal(), surftype, m_SurfVec[i].GetFoilSurf() );
+        CreateDegenGeom( dgs, pnts, nrms, uwpnts, urootcap, i, preview, GetFlipNormal(i), surftype, m_SurfVec[i].GetFoilSurf() );
     }
 }
 
@@ -3565,6 +3565,16 @@ int Geom::GetSurfType( int indx )
 int Geom::GetMainSurfType( int indx )
 {
     return m_MainSurfVec[indx].GetSurfType();
+}
+
+bool Geom::GetFlipNormal( int indx )
+{
+    return GetMainFlipNormal( m_SurfIndxVec[indx] );
+}
+
+bool Geom::GetMainFlipNormal( int indx )
+{
+    return m_MainSurfVec[indx].GetFlipNormal();
 }
 
 vec3d Geom::CompPnt01(const double &u, const double &w)
@@ -3973,7 +3983,7 @@ void Geom::WritePLOT3DFileXYZ( FILE* dump_file )
             for ( int k = 0 ; k < ( int )pnts[j].size() ; k++ )
             {
                 int kflip = k;
-                if ( !m_SurfVec[i].GetFlipNormal() )
+                if ( !GetFlipNormal(i) )
                 {
                     kflip = pnts[j].size() - 1 - k;
                 }
@@ -3986,7 +3996,7 @@ void Geom::WritePLOT3DFileXYZ( FILE* dump_file )
             for ( int k = 0 ; k < ( int )pnts[j].size() ; k++ )
             {
                 int kflip = k;
-                if ( !m_SurfVec[i].GetFlipNormal() )
+                if ( !GetFlipNormal(i) )
                 {
                     kflip = pnts[j].size() - 1 - k;
                 }
@@ -3999,7 +4009,7 @@ void Geom::WritePLOT3DFileXYZ( FILE* dump_file )
             for ( int k = 0 ; k < ( int )pnts[j].size() ; k++ )
             {
                 int kflip = k;
-                if ( !m_SurfVec[i].GetFlipNormal() )
+                if ( !GetFlipNormal(i) )
                 {
                     kflip = pnts[j].size() - 1 - k;
                 }
@@ -4041,7 +4051,7 @@ void Geom::WritePMARCGeomFile(FILE *fp, int &ipatch, vector<int> &idpat)
         UpdateTesselate( i, pnts, norms, false );
 
         int irev = 0;
-        if ( !m_SurfVec[i].GetFlipNormal() )
+        if ( !GetFlipNormal(i) )
         {
             irev = -1;
         }
@@ -4194,7 +4204,7 @@ void Geom::WriteX3D( xmlNodePtr node )
         UpdateTesselate( i, pnts, norms, false );
         unsigned int num_xsecs = pnts.size();
         unsigned int num_pnts = pnts[0].size();
-        bool f_norm = m_SurfVec[i].GetFlipNormal();
+        bool f_norm = GetFlipNormal( i );
         vector< vector<int> > pntIndex;
         // Resize vector
         pntIndex.resize( num_xsecs );
@@ -4342,7 +4352,7 @@ vector< TMesh* > Geom::CreateTMeshVec()
             TMeshVec[itmesh]->m_SurfNum = i;
             TMeshVec[itmesh]->m_UWPnts = uw_pnts;
             TMeshVec[itmesh]->m_XYZPnts = pnts;
-            bool f_norm = m_SurfVec[i].GetFlipNormal();
+            bool f_norm = GetFlipNormal(i);
 
             vec3d norm;
             vec3d v0, v1, v2, v3;
