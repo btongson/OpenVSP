@@ -4352,7 +4352,6 @@ vector< TMesh* > Geom::CreateTMeshVec()
     vector< vector<vec3d> > pnts;
     vector< vector<vec3d> > norms;
     vector< vector<vec3d> > uw_pnts;
-    double tol=1.0e-12;
 
     for ( int i = 0 ; i < GetNumTotalSurfs(); i++ )
     {
@@ -4385,6 +4384,19 @@ vector< TMesh* > Geom::CreateTMeshVec()
             TMeshVec[itmesh]->m_XYZPnts = pnts;
             bool f_norm = GetFlipNormal(i);
 
+            BuildTMeshTris(TMeshVec[itmesh], pnts, uw_pnts, f_norm, GetWMax(i));
+
+        }
+    }
+    return TMeshVec;
+}
+
+
+void Geom::BuildTMeshTris(TMesh *tmesh, const vector< vector<vec3d> > &pnts,
+                          const vector< vector<vec3d> > &uw_pnts, bool f_norm, double wmax )
+{
+    double tol=1.0e-12;
+
             vec3d norm;
             vec3d v0, v1, v2, v3;
             vec3d uw0, uw1, uw2, uw3;
@@ -4404,7 +4416,7 @@ vector< TMesh* > Geom::CreateTMeshVec()
                     uw2 = uw_pnts[j + 1][k + 1];
                     uw3 = uw_pnts[j][k + 1];
 
-                    double quadrant = ( uw0.y() + uw1.y() + uw2.y() + uw3.y() ) / GetWMax(i); // * 4 * 0.25 canceled.
+                    double quadrant = ( uw0.y() + uw1.y() + uw2.y() + uw3.y() ) / wmax; // * 4 * 0.25 canceled.
 
                     d21 = v2 - v1;
                     d01 = v0 - v1;
@@ -4420,11 +4432,11 @@ vector< TMesh* > Geom::CreateTMeshVec()
                             norm.normalize();
                             if ( f_norm )
                             {
-                                TMeshVec[itmesh]->AddTri( v0, v2, v1, norm * -1, uw0, uw2, uw1 );
+                                tmesh->AddTri( v0, v2, v1, norm * -1, uw0, uw2, uw1 );
                             }
                             else
                             {
-                                TMeshVec[itmesh]->AddTri( v0, v1, v2, norm, uw0, uw1, uw2 );
+                                tmesh->AddTri( v0, v1, v2, norm, uw0, uw1, uw2 );
                             }
                         }
 
@@ -4434,11 +4446,11 @@ vector< TMesh* > Geom::CreateTMeshVec()
                             norm.normalize();
                             if ( f_norm )
                             {
-                                TMeshVec[itmesh]->AddTri( v0, v3, v2, norm * -1, uw0, uw3, uw2 );
+                                tmesh->AddTri( v0, v3, v2, norm * -1, uw0, uw3, uw2 );
                             }
                             else
                             {
-                                TMeshVec[itmesh]->AddTri( v0, v2, v3, norm, uw0, uw2, uw3 );
+                                tmesh->AddTri( v0, v2, v3, norm, uw0, uw2, uw3 );
                             }
                         }
                     }
@@ -4451,11 +4463,11 @@ vector< TMesh* > Geom::CreateTMeshVec()
                             norm.normalize();
                             if ( f_norm )
                             {
-                                TMeshVec[itmesh]->AddTri( v0, v3, v1, norm * -1, uw0, uw3, uw1 );
+                                tmesh->AddTri( v0, v3, v1, norm * -1, uw0, uw3, uw1 );
                             }
                             else
                             {
-                                TMeshVec[itmesh]->AddTri( v0, v1, v3, norm, uw0, uw1, uw3 );
+                                tmesh->AddTri( v0, v1, v3, norm, uw0, uw1, uw3 );
                             }
                         }
 
@@ -4465,19 +4477,16 @@ vector< TMesh* > Geom::CreateTMeshVec()
                             norm.normalize();
                             if ( f_norm )
                             {
-                                TMeshVec[itmesh]->AddTri( v1, v3, v2, norm * -1, uw1, uw3, uw2 );
+                                tmesh->AddTri( v1, v3, v2, norm * -1, uw1, uw3, uw2 );
                             }
                             else
                             {
-                                TMeshVec[itmesh]->AddTri( v1, v2, v3, norm, uw1, uw2, uw3 );
+                                tmesh->AddTri( v1, v2, v3, norm, uw1, uw2, uw3 );
                             }
                         }
                     }
                 }
             }
-        }
-    }
-    return TMeshVec;
 }
 
 void Geom::AddLinkableParms( vector< string > & linkable_parm_vec, const string & link_container_id )
