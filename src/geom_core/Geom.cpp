@@ -1533,7 +1533,7 @@ void Geom::UpdateBBox()
     //==== Load Bounding Box ====//
     m_BBox.Reset();
     BndBox bb;
-    for ( int i = 0 ; i < ( int )m_SurfVec.size() ; i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs() ; i++ )
     {
         m_SurfVec[i].GetBoundingBox( bb );
         m_BBox.Update( bb );
@@ -1917,7 +1917,7 @@ void Geom::WriteFeatureLinesSVG( xmlNodePtr root, const BndBox &svgbox )
     // Shift the vehicle bounding box to align with the +x, +y, +z axes at the orgin
     vec3d to_orgin = GetVecToOrgin( svgbox );
 
-    for ( int i = 0 ; i < ( int )m_SurfVec.size() ; i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs() ; i++ )
     {
         vector < vector < vec3d > > allflines, allflines1, allflines2, allflines3, allflines4;
 
@@ -2116,7 +2116,7 @@ void Geom::UpdateDrawObj()
     m_WireShadeDrawObj_vec[3].m_GeomChanged = true;
 
     //==== Tesselate Surface ====//
-    for ( int i = 0 ; i < ( int )m_SurfVec.size() ; i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs() ; i++ )
     {
         vector< vector < vector < vec3d > > > pnts;
         vector< vector < vector < vec3d > > > norms;
@@ -3373,7 +3373,7 @@ void Geom::CreateDegenGeom( vector<DegenGeom> &dgs, bool preview )
     vector< vector< vec3d > > nrms;
     vector< vector< vec3d > > uwpnts;
 
-    for ( int i = 0 ; i < ( int )m_SurfVec.size() ; i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs() ; i++ )
     {
         bool urootcap = false;
 
@@ -3897,7 +3897,7 @@ void Geom::WriteAirfoilFiles( FILE* meta_fid )
 
 void Geom::WriteXSecFile( int geom_no, FILE* dump_file )
 {
-    for ( int i = 0 ; i < ( int )m_SurfVec.size() ; i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs() ; i++ )
     {
         //==== Tessellate Surface ====//
         vector< vector< vec3d > > pnts;
@@ -3935,7 +3935,7 @@ void Geom::WriteXSecFile( int geom_no, FILE* dump_file )
 
 void Geom::WritePLOT3DFileExtents( FILE* dump_file )
 {
-    for ( int i = 0 ; i < ( int )m_SurfVec.size() ; i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs() ; i++ )
     {
         //==== Tessellate Surface ====//
         vector< vector< vec3d > > pnts;
@@ -3949,7 +3949,7 @@ void Geom::WritePLOT3DFileExtents( FILE* dump_file )
 
 void Geom::WritePLOT3DFileXYZ( FILE* dump_file )
 {
-    for ( int i = 0 ; i < ( int )m_SurfVec.size() ; i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs() ; i++ )
     {
         //==== Tessellate Surface ====//
         vector< vector< vec3d > > pnts;
@@ -4002,7 +4002,7 @@ void Geom::WritePLOT3DFileXYZ( FILE* dump_file )
 
 void Geom::SetupPMARCFile( int &ipatch, vector < int > &idpat )
 {
-    for ( int i = 0 ; i < ( int )m_SurfVec.size() ; i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs() ; i++ )
     {
         if( m_SurfVec[i].GetSurfType() == vsp::WING_SURF ||
             m_SurfVec[i].GetSurfType() == vsp::PROP_SURF )
@@ -4022,7 +4022,7 @@ void Geom::WritePMARCGeomFile(FILE *fp, int &ipatch, vector<int> &idpat)
 {
     bool pmtippatch = false; // WARNING: Always false
 
-    for ( int i = 0 ; i < ( int )m_SurfVec.size() ; i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs() ; i++ )
     {
         //==== Tessellate Surface ====//
         vector< vector< vec3d > > pnts;
@@ -4111,7 +4111,7 @@ void Geom::WritePMARCWakeFile( FILE *fp, int &ipatch, vector<int> &idpat )
         }
     }
 
-    for ( int i = 0 ; i < ( int )m_SurfVec.size() ; i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs() ; i++ )
     {
         if ( idpat[ipatch] == 1 )
         {
@@ -4137,9 +4137,9 @@ void Geom::WritePMARCWakeFile( FILE *fp, int &ipatch, vector<int> &idpat )
 void Geom::CreateGeomResults( Results* res )
 {
     res->Add( NameValData( "Type", vsp::GEOM_XSECS ) );
-    res->Add( NameValData( "Num_Surfs", ( int )m_SurfVec.size() ) );
+    res->Add( NameValData( "Num_Surfs", GetNumTotalSurfs() ) );
 
-    for ( int i = 0 ; i < ( int )m_SurfVec.size() ; i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs() ; i++ )
     {
         //==== Tessellate Surface ====//
         vector< vector< vec3d > > pnts;
@@ -4177,7 +4177,7 @@ void Geom::WriteX3D( xmlNodePtr node )
     int offset = 0;
     char numstr[255];
 
-    for ( int i = 0 ; i < ( int )m_SurfVec.size() ; i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs() ; i++ )
     {
         vector< vector< vec3d > > pnts;
         vector< vector< vec3d > > norms;
@@ -4244,7 +4244,7 @@ void Geom::WritePovRay( FILE* fid, int comp_num )
     name.append( str );
 
     fprintf( fid, "#declare %s = mesh { \n", name.c_str() );
-    for ( int i = 0 ; i < ( int )m_SurfVec.size() ; i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs() ; i++ )
     {
         vector< vector< vec3d > > pnts;
         vector< vector< vec3d > > norms;
@@ -4303,14 +4303,14 @@ vector< TMesh* > Geom::CreateTMeshVec()
     vector< vector<vec3d> > uw_pnts;
     double tol=1.0e-12;
 
-    for ( int i = 0 ; i < ( int )m_SurfVec.size(); i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs(); i++ )
     {
         m_SurfVec[i].ResetUWSkip();
     }
 
-    for ( int i = 0 ; i < ( int )m_SurfVec.size() - 1 ; i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs() - 1 ; i++ )
     {
-        for ( int j = i + 1 ; j < ( int )m_SurfVec.size() ; j++ )
+        for ( int j = i + 1 ; j < GetNumTotalSurfs() ; j++ )
         {
             if ( m_SurfIndxVec[i] == m_SurfIndxVec[j] )
             {
@@ -4319,7 +4319,7 @@ vector< TMesh* > Geom::CreateTMeshVec()
         }
     }
 
-    for ( int i = 0 ; i < ( int )m_SurfVec.size() ; i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs() ; i++ )
     {
         if ( m_SurfVec[i].GetNumSectU() != 0 && m_SurfVec[i].GetNumSectW() != 0 )
         {
@@ -4798,7 +4798,7 @@ void Geom::AppendWakeData( vector < piecewise_curve_type >& curve_vec, vector < 
 void Geom::ExportSurfacePatches( vector<string> &surf_res_ids )
 {
     // Loop over all surfaces and tesselate
-    for ( int i = 0 ; i < ( int )m_SurfVec.size() ; i++ )
+    for ( int i = 0 ; i < GetNumTotalSurfs() ; i++ )
     {
         vector< vector< vector< vec3d > > > pnts, norms;
         UpdateSplitTesselate(i, pnts, norms);
