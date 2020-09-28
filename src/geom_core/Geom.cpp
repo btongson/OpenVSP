@@ -1114,8 +1114,8 @@ void Geom::GetUWTess01( int indx, vector < double > &u, vector < double > &w )
 
     UpdateTesselate( indx, pnts, norms, uw_pnts, false );
 
-    double umx = GetSurfPtr( indx )->GetUMax();
-    double wmx = GetSurfPtr( indx )->GetWMax();
+    double umx = GetUMax( indx );
+    double wmx = GetWMax( indx );
 
     u.resize( uw_pnts.size() );
     for ( int i = 0; i < uw_pnts.size(); i++ )
@@ -3577,6 +3577,26 @@ bool Geom::GetMainFlipNormal( int indx ) const
     return m_MainSurfVec[indx].GetFlipNormal();
 }
 
+double Geom::GetUMax( int indx ) const
+{
+    return GetMainUMax( m_SurfIndxVec[indx] );
+}
+
+double Geom::GetMainUMax( int indx ) const
+{
+    return m_MainSurfVec[indx].GetUMax();
+}
+
+double Geom::GetWMax( int indx ) const
+{
+    return GetMainWMax( m_SurfIndxVec[indx] );
+}
+
+double Geom::GetMainWMax( int indx ) const
+{
+    return m_MainSurfVec[indx].GetWMax();
+}
+
 vec3d Geom::CompPnt01(const double &u, const double &w)
 {
     return GetSurfPtr()->CompPnt01( u, w );
@@ -3819,7 +3839,7 @@ void Geom::WriteAirfoilFiles( FILE* meta_fid )
     double umin = Umin / m_MainSurfVec[0].GetUMax();
 
     double Vmin = 0.0;
-    double Vmax = m_MainSurfVec[0].GetWMax();
+    double Vmax = GetMainWMax(0);
     double Vle = ( Vmin + Vmax ) * 0.5;
 
     int foil_cnt = 0;
@@ -4373,7 +4393,7 @@ vector< TMesh* > Geom::CreateTMeshVec()
                     uw2 = uw_pnts[j + 1][k + 1];
                     uw3 = uw_pnts[j][k + 1];
 
-                    double quadrant = ( uw0.y() + uw1.y() + uw2.y() + uw3.y() ) / m_SurfVec[i].GetWMax(); // * 4 * 0.25 canceled.
+                    double quadrant = ( uw0.y() + uw1.y() + uw2.y() + uw3.y() ) / GetWMax(i); // * 4 * 0.25 canceled.
 
                     d21 = v2 - v1;
                     d01 = v0 - v1;
