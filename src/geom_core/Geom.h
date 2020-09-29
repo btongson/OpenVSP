@@ -450,6 +450,7 @@ public:
     virtual int GetSymFlag();
 
     virtual vector< TMesh* > CreateTMeshVec();
+    virtual vector< TMesh* > CreateTMeshVec( vector<VspSurf> &surf_vec );
     virtual void BuildTMeshTris( TMesh *tmesh, bool f_norm, double wmax );
 
     virtual BndBox GetBndBox()
