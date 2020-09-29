@@ -4384,7 +4384,7 @@ vector< TMesh* > Geom::CreateTMeshVec()
             TMeshVec[itmesh]->m_XYZPnts = pnts;
             bool f_norm = GetFlipNormal(i);
 
-            BuildTMeshTris(TMeshVec[itmesh], pnts, uw_pnts, f_norm, GetWMax(i));
+            BuildTMeshTris( TMeshVec[itmesh], f_norm, GetWMax(i) );
 
         }
     }
@@ -4392,29 +4392,31 @@ vector< TMesh* > Geom::CreateTMeshVec()
 }
 
 
-void Geom::BuildTMeshTris(TMesh *tmesh, const vector< vector<vec3d> > &pnts,
-                          const vector< vector<vec3d> > &uw_pnts, bool f_norm, double wmax )
+void Geom::BuildTMeshTris( TMesh *tmesh, bool f_norm, double wmax )
 {
     double tol=1.0e-12;
+
+    vector< vector<vec3d> > *pnts = &(tmesh->m_XYZPnts);
+    vector< vector<vec3d> > *uw_pnts = &(tmesh->m_UWPnts);
 
     vec3d norm;
     vec3d v0, v1, v2, v3;
     vec3d uw0, uw1, uw2, uw3;
     vec3d d21, d01, d03, d23, d20, d31;
 
-    for ( int j = 0 ; j < ( int )pnts.size() - 1 ; j++ )
+    for ( int j = 0 ; j < ( int )(*pnts).size() - 1 ; j++ )
     {
-        for ( int k = 0 ; k < ( int )pnts[0].size() - 1 ; k++ )
+        for ( int k = 0 ; k < ( int )(*pnts)[0].size() - 1 ; k++ )
         {
-            v0 = pnts[j][k];
-            v1 = pnts[j + 1][k];
-            v2 = pnts[j + 1][k + 1];
-            v3 = pnts[j][k + 1];
+            v0 = (*pnts)[j][k];
+            v1 = (*pnts)[j + 1][k];
+            v2 = (*pnts)[j + 1][k + 1];
+            v3 = (*pnts)[j][k + 1];
 
-            uw0 = uw_pnts[j][k];
-            uw1 = uw_pnts[j + 1][k];
-            uw2 = uw_pnts[j + 1][k + 1];
-            uw3 = uw_pnts[j][k + 1];
+            uw0 = (*uw_pnts)[j][k];
+            uw1 = (*uw_pnts)[j + 1][k];
+            uw2 = (*uw_pnts)[j + 1][k + 1];
+            uw3 = (*uw_pnts)[j][k + 1];
 
             double quadrant = ( uw0.y() + uw1.y() + uw2.y() + uw3.y() ) / wmax; // * 4 * 0.25 canceled.
 
