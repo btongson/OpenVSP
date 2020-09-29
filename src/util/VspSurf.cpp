@@ -401,7 +401,7 @@ void VspSurf::CreateBodyRevolution( const VspCurve &input_crv, bool match_uparm 
     eli::geom::surface::create_body_of_revolution( m_Surface, input_crv.GetCurve(), 0, true, match_uparm );
 
     ResetFlipNormal();
-    ResetUWSkip();
+    ResetUSkip();
 
     //==== Store Skining Data ====//
     m_SkinType = SKIN_BODY_REV;
@@ -508,7 +508,7 @@ void VspSurf::SkinRibs( const vector<rib_data_type> &ribs, const vector < int > 
     }
 
     ResetFlipNormal();
-    ResetUWSkip();
+    ResetUSkip();
 
     //==== Store Skining Data ====//
     m_SkinType = SKIN_RIBS;
@@ -590,7 +590,7 @@ void VspSurf::SkinCubicSpline( const vector<rib_data_type> &ribs, const vector<d
     }
 
     ResetFlipNormal();
-    ResetUWSkip();
+    ResetUSkip();
 }
 
 //==== Interpolate A Set Of Points =====//
@@ -961,7 +961,7 @@ void VspSurf::CompCurvature01( double u01, double v01, double& k1, double& k2, d
     CompCurvature( u01 * GetUMax(), v01 * GetWMax(), k1, k2, ka, kg );
 }
 
-void VspSurf::ResetUWSkip()
+void VspSurf::ResetUSkip()
 {
     piecewise_surface_type::index_type ip, jp, nupatch, nwpatch;
 
@@ -972,7 +972,6 @@ void VspSurf::ResetUWSkip()
     m_TipCluster.resize( nupatch );
 
     m_USkip.resize( nupatch );
-    m_WSkip.resize( nwpatch );
 
     for ( ip = 0; ip < nupatch; ip++ )
     {
@@ -980,9 +979,6 @@ void VspSurf::ResetUWSkip()
         m_RootCluster[ip] = 1.0;
         m_TipCluster[ip] = 1.0;
     }
-
-    for ( jp = 0; jp < nwpatch; jp++ )
-        m_WSkip[jp] = false;
 }
 
 void VspSurf::SetUSkipFirst( bool f )
@@ -1043,14 +1039,6 @@ void VspSurf::FlagDuplicate( VspSurf *othersurf )
         }
     }
 
-    for( jp = 0; jp < nvpatch; ++jp )
-    {
-        if ( vmatchcnt[jp] == nupatch )
-        {
-            m_WSkip[jp] = true;
-            othersurf->m_WSkip[jp] = true;
-        }
-    }
 }
 
 void VspSurf::MakeUTess( const vector<int> &num_u, vector<double> &u, const std::vector<int> & umerge ) const
@@ -1710,7 +1698,7 @@ bool VspSurf::CapUMin(int CapType, double len, double str, double offset, bool s
 {
     if (CapType == vsp::NO_END_CAP)
     {
-        ResetUWSkip();
+        ResetUSkip();
         return false;
     }
     multicap_creator_type cc;
@@ -1737,7 +1725,7 @@ bool VspSurf::CapUMin(int CapType, double len, double str, double offset, bool s
 
     if (!rtn_flag)
     {
-      ResetUWSkip();
+      ResetUSkip();
       return false;
     }
 
@@ -1745,12 +1733,12 @@ bool VspSurf::CapUMin(int CapType, double len, double str, double offset, bool s
 
     if (!rtn_flag)
     {
-      ResetUWSkip();
+      ResetUSkip();
       return false;
     }
 
     m_Surface.set_u0( 0.0 );
-    ResetUWSkip();
+    ResetUSkip();
     return true;
 }
 
@@ -1758,7 +1746,7 @@ bool VspSurf::CapUMax(int CapType, double len, double str, double offset, bool s
 {
     if (CapType == vsp::NO_END_CAP)
     {
-      ResetUWSkip();
+      ResetUSkip();
       return false;
     }
     multicap_creator_type cc;
@@ -1785,7 +1773,7 @@ bool VspSurf::CapUMax(int CapType, double len, double str, double offset, bool s
 
     if (!rtn_flag)
     {
-      ResetUWSkip();
+      ResetUSkip();
       return false;
     }
 
@@ -1793,10 +1781,10 @@ bool VspSurf::CapUMax(int CapType, double len, double str, double offset, bool s
 
     if (!rtn_flag)
     {
-      ResetUWSkip();
+      ResetUSkip();
       return false;
     }
-    ResetUWSkip();
+    ResetUSkip();
     return true;
 }
 
