@@ -699,6 +699,7 @@ protected:
     virtual void UpdateMainTessVec();
     virtual void UpdateTessVec();
 
+    virtual void UpdateDegenGeomPreview();
     virtual void UpdateTesselate( int indx, vector< vector< vec3d > > &pnts, vector< vector< vec3d > > &norms, bool degen );
     virtual void UpdateTesselate( int indx, vector< vector< vec3d > > &pnts, vector< vector< vec3d > > &norms, vector< vector< vec3d > > &uw_pnts, bool degen );
 
@@ -732,6 +733,7 @@ protected:
     vector <SimpleFeatureTess> m_MainFeatureTessVec;
     vector <SimpleFeatureTess> m_FeatureTessVec;
 
+    vector< DegenGeom > m_DegenGeomPreviewVec;
     BndBox m_BBox;
 
     vector< bool > m_SetFlags;
