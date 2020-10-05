@@ -1694,3 +1694,33 @@ void DegenGeom::write_degenHingeLineResultsManager( vector<string> &hinge_ids, c
     hinge_res->Add( NameValData( "xStart", degenHingeLine.xStart ) );
     hinge_res->Add( NameValData( "xEnd", degenHingeLine.xEnd ) );
 }
+
+// This does not attempt to transform everything in a DegenGeom.  This is limited to Surface and Plate representations
+// as this is only meant to work with the preview visualization.
+void DegenGeom::Transform( const Matrix4d & mat )
+{
+    for ( int i = 0; i < degenSurface.x.size(); i++ )
+    {
+        mat.xformvec( degenSurface.x[i] );
+    }
+
+    for ( int i = 0; i < degenSurface.nvec.size(); i++ )
+    {
+        mat.xformnormvec( degenSurface.nvec[i] );
+    }
+
+    for ( int i = 0; i < degenPlates.size(); i++ )
+    {
+        for ( int j = 0; j < degenPlates[i].x.size(); j++ )
+        {
+            mat.xformvec( degenPlates[i].x[j] );
+        }
+
+        for ( int j = 0; j < degenPlates[i].nCamber.size(); j++ )
+        {
+            mat.xformnormvec( degenPlates[i].nCamber[j] );
+        }
+
+        mat.xformnormvec( degenPlates[i].nPlate );
+    }
+}

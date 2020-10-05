@@ -319,6 +319,13 @@ public:
     static void write_degenSubSurfResultsManager( vector< string > &subsurf_ids, const DegenSubSurf &degenSubSurf );
     static void write_degenHingeLineResultsManager( vector< string > &hinge_ids, const DegenHingeLine &degenHingeLine );
 
+
+    bool GetFlipNormal() const { return flip_normal; }
+    void FlipNormal() { flip_normal = !flip_normal; }
+    void ResetFlipNormal( ) { flip_normal = false; }
+
+    void Transform( const Matrix4d & mat );
+
 protected:
 
     DegenSurface degenSurface;
