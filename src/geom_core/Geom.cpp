@@ -17,6 +17,8 @@
 using namespace vsp;
 
 #include <float.h>
+#include <chrono>
+using namespace std::chrono;
 
 //==== Constructor ====//
 GeomType::GeomType()
@@ -180,7 +182,14 @@ void GeomBase::ParmChanged( Parm* parm_ptr, int type )
         }
     }
 
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
     Update();
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+    duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
+
+    printf( "Time: %f\n", time_span );
+
     m_Vehicle->ParmChanged( parm_ptr, type );
     m_UpdatedParmVec.clear();
 }
